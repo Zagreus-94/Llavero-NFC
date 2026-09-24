@@ -1,44 +1,7 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Pokémon Mini Player</title>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #121212;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-    }
-    #game-container {
-      width: 100%;
-      height: 100%;
-      max-width: 640px;
-      display: flex;
-      flex-direction: column;
-    }
-  </style>
-</head>
-<body>
-
-  <div id="game-container">
-    <div id="display"></div>
-  </div>
-
-  <script type="text/javascript">
+<script type="text/javascript">
     EJS_player = "#display";
-    EJS_core = "gbc"; // Motor Game Boy Color
-    EJS_gameUrl = "roms/pokemon.gbc"; // Ruta a tu ROM
+    EJS_core = "gba";
+    EJS_gameUrl = "Yoshi's Universal Gravitation [GBA] Español.gba";
     EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
   </script>
   <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
-
-</body>
-</html>
