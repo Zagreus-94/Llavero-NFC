@@ -46,7 +46,15 @@
     }
     .btn-submit:active { transform: translateY(4px); box-shadow: 0 0 0 #99000c; }
     #error-msg { font-size: 8px; color: #ff4d4d; margin-top: 15px; min-height: 12px; }
-    #game { width: 100vw; height: 100vh; display: none; }
+    
+    /* Contenedor del emulador */
+    #game-container {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      display: none;
+      z-index: 1;
+    }
   </style>
 </head>
 <body>
@@ -70,17 +78,13 @@
     <div id="error-msg"></div>
   </div>
 
-  <!-- EMULADOR -->
-  <div id="game"></div>
+  <!-- CONTENEDOR DEL EMULADOR -->
+  <div id="game-container">
+    <div id="game"></div>
+  </div>
 
   <script type="text/javascript">
     const PIN_CORRECTO = "1991";
-
-    // Configuración global previa del emulador
-    EJS_player = "#game";
-    EJS_core = "nes";
-    EJS_gameUrl = "tinytoons.nes"; // Verifica que la ROM subida se llame exactamente así
-    EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
 
     window.onload = function() {
       if (localStorage.getItem("llavero_tinytoons_autenticado") === "true") {
@@ -101,10 +105,16 @@
 
     function iniciarJuego() {
       document.getElementById("lock-screen").style.display = "none";
-      document.getElementById("game").style.display = "block";
+      document.getElementById("game-container").style.display = "block";
 
-      // Cargar script del loader dinámicamente
-      var script = document.createElement("script");
+      // Variables globales requeridas por EmulatorJS
+      window.EJS_player = "#game";
+      window.EJS_core = "nes";
+      window.EJS_gameUrl = "tinytoons.nes"; // Debe coincidir exactamente con el nombre en GitHub
+      window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
+
+      // Cargar dinámicamente el loader
+      const script = document.createElement("script");
       script.src = "https://cdn.emulatorjs.org/stable/data/loader.js";
       document.body.appendChild(script);
     }
