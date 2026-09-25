@@ -17,6 +17,7 @@
       overflow: hidden;
     }
 
+    /* Envoltorio centrado */
     .screen-wrapper {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -27,17 +28,19 @@
       padding: 15px;
     }
 
+    /* Tarjeta estilo Pokémon Amarillo */
     .card-container {
       width: 100%;
       max-width: 330px;
       padding: 20px 16px;
       background: #181813;
-      border: 4px solid #ffcb05;
+      border: 4px solid #ffcb05; /* Amarillo Pikachu */
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(255, 203, 5, 0.4);
       text-align: center;
     }
 
+    /* Contenedor para la imagen de Pikachu */
     .badge-icon { 
       margin-bottom: 12px;
       display: flex;
@@ -75,6 +78,7 @@
     
     #error-msg { font-size: 8px; color: #ff4d4d; margin-top: 10px; min-height: 12px; }
 
+    /* Contenedor del emulador */
     #game-container {
       position: fixed;
       top: 0; left: 0;
@@ -153,7 +157,7 @@
 
       window.EJS_player = "#game";
       window.EJS_core = "gbc";
-      window.EJS_gameUrl = "pokemon-yellow.gbc";
+      window.EJS_gameUrl = "pokemon-yellow.gb"; // Coincide exactamente con tu archivo .gb
       window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
 
       const script = document.createElement("script");
