@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Pokémon Amarillo NFC</title>
+  <title>Pokémon Yellow NFC</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   
   <style>
@@ -17,7 +17,6 @@
       overflow: hidden;
     }
 
-    /* Envoltorio centrado */
     .screen-wrapper {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -28,33 +27,33 @@
       padding: 15px;
     }
 
-    /* Tarjeta estilo Pokémon Amarillo */
     .card-container {
       width: 100%;
       max-width: 330px;
       padding: 20px 16px;
-      background: #181813;
-      border: 4px solid #ffcb05; /* Amarillo Pikachu */
+      background: #181810;
+      border: 4px solid #facc15;
       border-radius: 12px;
-      box-shadow: 0 0 20px rgba(255, 203, 5, 0.4);
+      box-shadow: 0 0 20px rgba(250, 204, 21, 0.4);
       text-align: center;
     }
 
-    /* Contenedor para la imagen de Pikachu */
-    .badge-icon { 
-      margin-bottom: 12px;
+    .badge-icon {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 12px auto;
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
     .badge-icon img {
-      width: 60px;
-      height: auto;
-      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
     }
 
-    h1 { font-size: 11px; line-height: 1.3; color: #ffcb05; margin: 0 0 8px 0; }
+    h1 { font-size: 11px; line-height: 1.3; color: #facc15; margin: 0 0 8px 0; }
     p.subtitle { font-size: 7px; line-height: 1.4; color: #a0a0b0; margin-bottom: 16px; }
 
     .pin-box {
@@ -62,23 +61,22 @@
       font-family: 'Press Start 2P', monospace; font-size: 16px;
       text-align: center; letter-spacing: 6px;
       background-color: #050508; border: 2px solid #3a3a4c;
-      border-radius: 8px; color: #ffcb05; outline: none;
+      border-radius: 8px; color: #facc15; outline: none;
     }
-    .pin-box:focus { border-color: #ffcb05; }
+    .pin-box:focus { border-color: #facc15; }
 
     .btn-submit {
       width: 100%; margin-top: 14px; padding: 12px;
       font-family: 'Press Start 2P', monospace; font-size: 10px;
-      color: #000000; background-color: #ffcb05;
+      color: #000000; background-color: #facc15;
       border: none; border-radius: 8px; cursor: pointer;
-      box-shadow: 0 4px 0 #b38f00;
+      box-shadow: 0 4px 0 #ca8a04;
       font-weight: bold;
     }
-    .btn-submit:active { transform: translateY(4px); box-shadow: 0 0 0 #b38f00; }
+    .btn-submit:active { transform: translateY(4px); box-shadow: 0 0 0 #ca8a04; }
     
     #error-msg { font-size: 8px; color: #ff4d4d; margin-top: 10px; min-height: 12px; }
 
-    /* Contenedor del emulador */
     #game-container {
       position: fixed;
       top: 0; left: 0;
@@ -103,13 +101,10 @@
   <!-- PANTALLA DE BLOQUEO -->
   <div id="lock-wrapper" class="screen-wrapper">
     <div class="card-container">
-      
-      <!-- IMAGEN DE PIKACHU -->
       <div class="badge-icon">
-        <img src="Pikachu.png" alt="Pikachu Logo">
+        <img src="./Pikachu.png" alt="Pikachu Logo">
       </div>
-      
-      <h1>POKÉMON AMARILLO</h1>
+      <h1>POKÉMON YELLOW</h1>
       <p class="subtitle">Ingresa el PIN de tu Tarjeta de Autenticidad</p>
       
       <input 
@@ -156,8 +151,8 @@
       document.getElementById("game-container").style.display = "block";
 
       window.EJS_player = "#game";
-      window.EJS_core = "gbc";
-      window.EJS_gameUrl = "pokemon-yellow.gb"; // Coincide exactamente con tu archivo .gb
+      window.EJS_core = "gb";
+      window.EJS_gameUrl = "pokemon-yellow.gb";
       window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
 
       const script = document.createElement("script");
