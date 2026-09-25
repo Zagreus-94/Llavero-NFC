@@ -94,6 +94,19 @@
       object-fit: contain !important;
       margin: 0 auto;
     }
+
+    /* Centrar botón de inicio del emulador */
+    #game button, 
+    #game div[style*="cursor: pointer"],
+    .ejs_start_button {
+      position: absolute !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      margin: 0 !important;
+      z-index: 9999 !important;
+      max-width: 80% !important;
+    }
   </style>
 </head>
 <body>
@@ -102,7 +115,7 @@
   <div id="lock-wrapper" class="screen-wrapper">
     <div class="card-container">
       <div class="badge-icon">
-        <img src="./pikachu.png" alt="pikachu Logo">
+        <img src="./Pikachu.png" alt="Pikachu Logo">
       </div>
       <h1>POKÉMON YELLOW</h1>
       <p class="subtitle">Ingresa el PIN de tu Tarjeta de Autenticidad</p>
@@ -154,6 +167,23 @@
       window.EJS_core = "gb";
       window.EJS_gameUrl = "pokemon-yellow.gb";
       window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
+      window.EJS_startOnLoaded = true;
+
+      const observer = new MutationObserver((mutations, obs) => {
+        const gameDiv = document.getElementById("game");
+        if (gameDiv) {
+          const startBtn = gameDiv.querySelector("button, div[style*='cursor: pointer']");
+          if (startBtn) {
+            startBtn.click();
+            obs.disconnect();
+          }
+        }
+      });
+
+      observer.observe(document.getElementById("game"), {
+        childList: true,
+        subtree: true
+      });
 
       const script = document.createElement("script");
       script.src = "https://cdn.emulatorjs.org/stable/data/loader.js";
