@@ -7,7 +7,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   
   <style>
-    * { box-sizing: border-box; user-select: none; }
+    * { 
+      box-sizing: border-box; 
+      user-select: none; 
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
     
     html, body {
       margin: 0; padding: 0;
@@ -15,6 +20,7 @@
       background-color: #0d0d0d; color: #ffffff;
       font-family: 'Press Start 2P', monospace;
       overflow: hidden;
+      touch-action: manipulation;
     }
 
     /* PANTALLA DE DESBLOQUEO */
@@ -50,7 +56,7 @@
     .btn-submit:active { transform: translateY(4px); box-shadow: 0 0 0 #ca8a04; }
     #error-msg { font-size: 8px; color: #ff4d4d; margin-top: 10px; min-height: 12px; }
 
-    /* LAYOUT DE LA CONSOLA */
+    /* LAYOUT CONSOLA ESTILO DELTA */
     #console-wrapper {
       display: none;
       width: 100vw;
@@ -62,15 +68,16 @@
 
     .screen-bezel {
       position: absolute;
-      top: 15px;
+      top: 10px;
       left: 50%;
       transform: translateX(-50%);
-      width: calc(100% - 32px);
-      max-width: 360px;
-      height: 270px;
+      width: calc(100% - 24px);
+      max-width: 380px;
+      height: calc(48vh);
+      max-height: 300px;
       background: #27272a;
       border-radius: 12px 12px 35px 12px;
-      padding: 12px 12px 8px 12px;
+      padding: 10px 10px 6px 10px;
       box-shadow: inset 0 3px 6px rgba(0,0,0,0.8), 0 4px 10px rgba(0,0,0,0.3);
       display: flex;
       flex-direction: column;
@@ -78,14 +85,14 @@
       z-index: 2;
     }
 
-    .bezel-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .bezel-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
     .brand-title { font-size: 7px; color: #a1a1aa; letter-spacing: 1px; }
-    .power-led { width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%; box-shadow: 0 0 8px #ef4444; }
+    .power-led { width: 7px; height: 7px; background-color: #ef4444; border-radius: 50%; box-shadow: 0 0 6px #ef4444; }
 
     /* CONTENEDOR DEL EMULADOR */
     #game {
       width: 100% !important;
-      height: 220px !important;
+      height: calc(100% - 16px) !important;
       background-color: #000;
       border-radius: 4px;
       overflow: hidden;
@@ -97,42 +104,96 @@
       object-fit: contain !important;
     }
 
-    /* DISEÑO VISUAL INFERIOR */
+    /* OCULTAR OVERLAY DE CONTROLES NATIVOS DE EMULATORJS */
+    .ejs_touch_controls, 
+    div[class*="touch"],
+    div[style*="touch-action"] {
+      display: none !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    /* CARCASA Y CONTROLES TOUCH CUSTOM (TIPO DELTA) */
     .controls-body {
       position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
+      bottom: 0;
+      left: 0;
       width: 100%;
-      max-width: 360px;
       height: calc(100vh - 310px);
+      min-height: 280px;
       display: flex;
       flex-direction: column;
       justify-content: space-around;
-      padding: 0 16px;
-      z-index: 1;
+      padding: 10px 20px 25px 20px;
+      z-index: 10;
     }
 
-    .middle-controls { display: flex; justify-content: space-between; align-items: center; padding: 0 10px; }
-    .dpad { width: 90px; height: 90px; position: relative; }
-    .dpad-cross { position: absolute; background: #18181b; border-radius: 4px; box-shadow: 0 4px 0 #000; }
-    .dpad-v { width: 30px; height: 90px; left: 30px; top: 0; }
-    .dpad-h { width: 90px; height: 30px; left: 0; top: 30px; }
+    .middle-controls { display: flex; justify-content: space-between; align-items: center; padding: 0 5px; }
 
-    .action-buttons { display: flex; gap: 14px; transform: rotate(-15deg); background: rgba(0,0,0,0.1); padding: 8px 12px; border-radius: 30px; }
+    /* D-PAD (CRUCIETA) */
+    .dpad { 
+      width: 120px; 
+      height: 120px; 
+      position: relative; 
+    }
+    .dpad-btn {
+      position: absolute;
+      background: #18181b;
+      box-shadow: inset 0 2px 2px rgba(255,255,255,0.2), 0 4px 0 #000;
+      active-background: #000;
+      touch-action: none;
+    }
+    .dpad-btn:active, .dpad-btn.active {
+      background: #000;
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #000;
+    }
+
+    .dpad-up { top: 0; left: 40px; width: 40px; height: 45px; border-radius: 6px 6px 0 0; }
+    .dpad-down { bottom: 0; left: 40px; width: 40px; height: 45px; border-radius: 0 0 6px 6px; }
+    .dpad-left { top: 40px; left: 0; width: 45px; height: 40px; border-radius: 6px 0 0 6px; }
+    .dpad-right { top: 40px; right: 0; width: 45px; height: 40px; border-radius: 0 6px 6px 0; }
+    .dpad-center { top: 40px; left: 40px; width: 40px; height: 40px; background: #18181b; position: absolute; }
+
+    /* BOTONES ACCIÓN A/B */
+    .action-buttons { 
+      display: flex; 
+      gap: 16px; 
+      transform: rotate(-15deg); 
+      background: rgba(0,0,0,0.12); 
+      padding: 10px 14px; 
+      border-radius: 40px; 
+    }
     .btn-round {
-      width: 42px; height: 42px; border-radius: 50%; background: #b91c1c;
-      box-shadow: 0 4px 0 #7f1d1d, inset 0 2px 4px rgba(255,255,255,0.3);
+      width: 52px; height: 52px; border-radius: 50%; background: #b91c1c;
+      box-shadow: 0 5px 0 #7f1d1d, inset 0 2px 4px rgba(255,255,255,0.3);
       display: flex; justify-content: center; align-items: center;
-      font-size: 8px; font-weight: bold; color: #000;
+      font-size: 10px; font-weight: bold; color: #ffffff;
+      touch-action: none;
+    }
+    .btn-round:active, .btn-round.active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #7f1d1d;
+      background: #991b1b;
     }
 
-    .bottom-controls { display: flex; justify-content: center; gap: 20px; }
-    .pill-button { width: 45px; height: 12px; background: #3f3f46; border-radius: 10px; transform: rotate(-25deg); box-shadow: 0 2px 0 #18181b; }
-    .pill-label { font-size: 6px; color: #18181b; margin-top: 16px; text-align: center; }
+    /* SELECT Y START */
+    .bottom-controls { display: flex; justify-content: center; gap: 26px; }
+    .pill-wrapper { display: flex; flex-direction: column; align-items: center; }
+    .pill-button { 
+      width: 50px; height: 14px; background: #3f3f46; 
+      border-radius: 10px; transform: rotate(-25deg); 
+      box-shadow: 0 3px 0 #18181b; 
+      touch-action: none;
+    }
+    .pill-button:active, .pill-button.active {
+      transform: rotate(-25deg) translateY(2px);
+      box-shadow: 0 1px 0 #18181b;
+    }
+    .pill-label { font-size: 7px; color: #18181b; margin-top: 10px; text-align: center; font-weight: bold; }
 
     .speaker-grill { align-self: flex-end; display: flex; gap: 6px; transform: rotate(-25deg); margin-right: 15px; }
-    .speaker-line { width: 5px; height: 35px; background: rgba(0,0,0,0.15); border-radius: 3px; }
+    .speaker-line { width: 5px; height: 32px; background: rgba(0,0,0,0.15); border-radius: 3px; }
   </style>
 </head>
 <body>
@@ -152,7 +213,7 @@
     </div>
   </div>
 
-  <!-- CONSOLA COMPLETA GAME BOY EDITION -->
+  <!-- CONSOLA COMPLETA ESTILO DELTA SKIN -->
   <div id="console-wrapper">
     <div class="screen-bezel">
       <div class="bezel-header">
@@ -164,23 +225,30 @@
 
     <div class="controls-body">
       <div class="middle-controls">
+        <!-- D-PAD INTERACTIVO -->
         <div class="dpad">
-          <div class="dpad-cross dpad-v"></div>
-          <div class="dpad-cross dpad-h"></div>
+          <div class="dpad-center"></div>
+          <div class="dpad-btn dpad-up" data-key="ArrowUp"></div>
+          <div class="dpad-btn dpad-down" data-key="ArrowDown"></div>
+          <div class="dpad-btn dpad-left" data-key="ArrowLeft"></div>
+          <div class="dpad-btn dpad-right" data-key="ArrowRight"></div>
         </div>
+
+        <!-- BOTONES A / B INTERACTIVOS -->
         <div class="action-buttons">
-          <div class="btn-round">B</div>
-          <div class="btn-round">A</div>
+          <div class="btn-round" data-key="s">B</div>
+          <div class="btn-round" data-key="a">A</div>
         </div>
       </div>
 
+      <!-- SELECT Y START -->
       <div class="bottom-controls">
-        <div>
-          <div class="pill-button"></div>
+        <div class="pill-wrapper">
+          <div class="pill-button" data-key="Shift"></div>
           <div class="pill-label">SELECT</div>
         </div>
-        <div>
-          <div class="pill-button"></div>
+        <div class="pill-wrapper">
+          <div class="pill-button" data-key="Enter"></div>
           <div class="pill-label">START</div>
         </div>
       </div>
@@ -214,25 +282,61 @@
       }
     }
 
-    function reubicarControlesTactiles() {
-      // Inyectar CSS global para desplazar la capa de botones táctiles de EmulatorJS hacia la carcasa
-      const style = document.createElement("style");
-      style.innerHTML = `
-        /* Forzar que el contenedor de controles ocupe la parte inferior */
-        .ejs_touch_controls, 
-        div[class*="touch_controls"],
-        div[style*="touch-action"] {
-          position: fixed !important;
-          top: 280px !important;
-          bottom: 0 !important;
-          left: 0 !important;
-          width: 100vw !important;
-          height: calc(100vh - 280px) !important;
-          background: transparent !important;
-          z-index: 9999 !important;
+    // MAPEO DE EVENTOS TECLADO VIRTUAL HACIA EL EMULADOR
+    function mapearTeclasDelta() {
+      const mapeoTeclas = {
+        'ArrowUp': 38,
+        'ArrowDown': 40,
+        'ArrowLeft': 37,
+        'ArrowRight': 39,
+        'a': 90,       /* Z en teclado */
+        's': 88,       /* X en teclado */
+        'Enter': 13,   /* Enter */
+        'Shift': 16    /* Shift */
+      };
+
+      function simularEvento(codigoTecla, tipo) {
+        const evento = new KeyboardEvent(tipo, {
+          keyCode: codigoTecla,
+          which: codigoTecla,
+          bubbles: true,
+          cancelable: true
+        });
+        
+        // Enviar evento globalmente y al iframe/canvas si existe
+        window.dispatchEvent(evento);
+        document.dispatchEvent(evento);
+        
+        const iframe = document.querySelector("#game iframe");
+        if (iframe && iframe.contentDocument) {
+          iframe.contentDocument.dispatchEvent(evento);
         }
-      `;
-      document.head.appendChild(style);
+      }
+
+      const elementosControles = document.querySelectorAll("[data-key]");
+      
+      elementosControles.forEach(btn => {
+        const key = btn.getAttribute("data-key");
+        const keyCode = mapeoTeclas[key];
+
+        const presionar = (e) => {
+          e.preventDefault();
+          btn.classList.add("active");
+          simularEvento(keyCode, "keydown");
+        };
+
+        const soltar = (e) => {
+          e.preventDefault();
+          btn.classList.remove("active");
+          simularEvento(keyCode, "keyup");
+        };
+
+        btn.addEventListener("touchstart", presionar, { passive: false });
+        btn.addEventListener("touchend", soltar, { passive: false });
+        btn.addEventListener("mousedown", presionar);
+        btn.addEventListener("mouseup", soltar);
+        btn.addEventListener("mouseleave", soltar);
+      });
     }
 
     function iniciarJuego() {
@@ -244,6 +348,7 @@
       window.EJS_gameUrl = "pokemon-yellow.gb";
       window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
       window.EJS_startOnLoaded = true;
+      window.EJS_onMobile = false; // Desactiva la capa táctil por defecto del emulador
 
       const observer = new MutationObserver((mutations, obs) => {
         const gameDiv = document.getElementById("game");
@@ -251,7 +356,7 @@
           const startBtn = gameDiv.querySelector("button, div[style*='cursor: pointer']");
           if (startBtn) {
             startBtn.click();
-            reubicarControlesTactiles();
+            mapearTeclasDelta();
             obs.disconnect();
           }
         }
