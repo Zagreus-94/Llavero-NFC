@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Pokémon Yellow NFC</title>
+  <title>Pokémon Yellow - Retro Skin Edition</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   
   <style>
@@ -17,127 +17,264 @@
       overflow: hidden;
     }
 
+    /* PANTALLA DE DESBLOQUEO */
     .screen-wrapper {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-      padding: 15px;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      display: flex; justify-content: center; align-items: center;
+      z-index: 100; padding: 15px; background-color: #0d0d0d;
     }
 
     .card-container {
-      width: 100%;
-      max-width: 330px;
-      padding: 20px 16px;
-      background: #181810;
-      border: 4px solid #facc15;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(250, 204, 21, 0.4);
-      text-align: center;
+      width: 100%; max-width: 330px; padding: 20px 16px;
+      background: #181810; border: 4px solid #facc15; border-radius: 12px;
+      box-shadow: 0 0 20px rgba(250, 204, 21, 0.4); text-align: center;
     }
 
-    .badge-icon {
-      width: 70px;
-      height: 70px;
-      margin: 0 auto 12px auto;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .badge-icon img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-    }
+    .badge-icon { width: 70px; height: 70px; margin: 0 auto 12px auto; display: flex; justify-content: center; align-items: center; }
+    .badge-icon img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
     h1 { font-size: 11px; line-height: 1.3; color: #facc15; margin: 0 0 8px 0; }
     p.subtitle { font-size: 7px; line-height: 1.4; color: #a0a0b0; margin-bottom: 16px; }
 
     .pin-box {
-      width: 100%; padding: 12px;
-      font-family: 'Press Start 2P', monospace; font-size: 16px;
-      text-align: center; letter-spacing: 6px;
-      background-color: #050508; border: 2px solid #3a3a4c;
+      width: 100%; padding: 12px; font-family: 'Press Start 2P', monospace; font-size: 16px;
+      text-align: center; letter-spacing: 6px; background-color: #050508; border: 2px solid #3a3a4c;
       border-radius: 8px; color: #facc15; outline: none;
     }
-    .pin-box:focus { border-color: #facc15; }
 
     .btn-submit {
-      width: 100%; margin-top: 14px; padding: 12px;
-      font-family: 'Press Start 2P', monospace; font-size: 10px;
-      color: #000000; background-color: #facc15;
-      border: none; border-radius: 8px; cursor: pointer;
-      box-shadow: 0 4px 0 #ca8a04;
-      font-weight: bold;
+      width: 100%; margin-top: 14px; padding: 12px; font-family: 'Press Start 2P', monospace;
+      font-size: 10px; color: #000000; background-color: #facc15; border: none;
+      border-radius: 8px; cursor: pointer; box-shadow: 0 4px 0 #ca8a04; font-weight: bold;
     }
     .btn-submit:active { transform: translateY(4px); box-shadow: 0 0 0 #ca8a04; }
-    
     #error-msg { font-size: 8px; color: #ff4d4d; margin-top: 10px; min-height: 12px; }
 
-    #game-container {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
+    /* LAYOUT DE LA CONSOLA (GAME BOY SKIN) */
+    #console-wrapper {
       display: none;
-      z-index: 1;
-      background-color: #000;
+      width: 100vw;
+      height: 100vh;
+      background: #eab308; /* Color de plástico de la carcasa */
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px 24px 16px;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
     }
 
-    #game { width: 100% !important; height: 100% !important; }
+    /* Borde superior del bisel del Game Boy */
+    .screen-bezel {
+      width: 100%;
+      max-width: 360px;
+      background: #27272a;
+      border-radius: 12px 12px 35px 12px;
+      padding: 16px 16px 12px 16px;
+      box-shadow: inset 0 3px 6px rgba(0,0,0,0.8), 0 4px 10px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .bezel-header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .brand-title {
+      font-size: 7px;
+      color: #a1a1aa;
+      letter-spacing: 1px;
+    }
+
+    .power-led {
+      width: 8px;
+      height: 8px;
+      background-color: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ef4444;
+    }
+
+    /* Área donde corre la pantalla del emulador */
+    #game {
+      width: 100% !important;
+      height: 240px !important;
+      background-color: #000;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.9);
+    }
 
     #game canvas {
       width: 100% !important;
-      max-height: 60vh !important;
+      height: 100% !important;
       object-fit: contain !important;
-      margin: 0 auto;
     }
 
-    /* Centrar botón de inicio del emulador */
-    #game button, 
-    #game div[style*="cursor: pointer"],
+    /* MARCO INFERIOR DE CONTROLES DIBUJADOS EN CSS */
+    .controls-body {
+      width: 100%;
+      max-width: 360px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      margin-top: 10px;
+    }
+
+    .middle-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 10px;
+    }
+
+    /* Cruceta D-Pad */
+    .dpad {
+      width: 90px;
+      height: 90px;
+      position: relative;
+    }
+    .dpad-cross {
+      position: absolute;
+      background: #18181b;
+      border-radius: 4px;
+      box-shadow: 0 4px 0 #000;
+    }
+    .dpad-v { width: 30px; height: 90px; left: 30px; top: 0; }
+    .dpad-h { width: 90px; height: 30px; left: 0; top: 30px; }
+
+    /* Botones A y B inclinados */
+    .action-buttons {
+      display: flex;
+      gap: 14px;
+      transform: rotate(-15deg);
+      background: rgba(0,0,0,0.1);
+      padding: 8px 12px;
+      border-radius: 30px;
+    }
+    .btn-round {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #b91c1c;
+      box-shadow: 0 4px 0 #7f1d1d, inset 0 2px 4px rgba(255,255,255,0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 8px;
+      font-weight: bold;
+      color: #000;
+    }
+
+    /* Botones Select y Start */
+    .bottom-controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    .pill-button {
+      width: 45px;
+      height: 12px;
+      background: #3f3f46;
+      border-radius: 10px;
+      transform: rotate(-25deg);
+      box-shadow: 0 2px 0 #18181b;
+      text-align: center;
+    }
+    .pill-label {
+      font-size: 6px;
+      color: #18181b;
+      margin-top: 16px;
+    }
+
+    /* Rejilla de la bocina */
+    .speaker-grill {
+      align-self: flex-end;
+      display: flex;
+      gap: 6px;
+      transform: rotate(-25deg);
+      margin-right: 15px;
+    }
+    .speaker-line {
+      width: 5px;
+      height: 35px;
+      background: rgba(0,0,0,0.15);
+      border-radius: 3px;
+    }
+
+    /* Ocultar botones predeterminados estorbosos del emulador si interfieren */
     .ejs_start_button {
       position: absolute !important;
-      top: 50% !important;
-      left: 50% !important;
+      top: 50% !important; left: 50% !important;
       transform: translate(-50%, -50%) !important;
-      margin: 0 !important;
-      z-index: 9999 !important;
-      max-width: 80% !important;
     }
   </style>
 </head>
 <body>
 
-  <!-- PANTALLA DE BLOQUEO -->
+  <!-- PANTALLA DE DESBLOQUEO -->
   <div id="lock-wrapper" class="screen-wrapper">
     <div class="card-container">
       <div class="badge-icon">
-        <!-- RUTA CORREGIDA A MINÚSCULAS -->
         <img src="./pikachu.png" alt="Pikachu Logo">
       </div>
       <h1>POKÉMON YELLOW</h1>
       <p class="subtitle">Ingresa el PIN de tu Tarjeta de Autenticidad</p>
       
-      <input 
-        type="password" 
-        id="pin-input" 
-        class="pin-box" 
-        maxlength="4" 
-        placeholder="••••"
-        inputmode="numeric"
-      >
-      
+      <input type="password" id="pin-input" class="pin-box" maxlength="4" placeholder="••••" inputmode="numeric">
       <button class="btn-submit" onclick="validarPin()">DESBLOQUEAR</button>
       <div id="error-msg"></div>
     </div>
   </div>
 
-  <!-- CONTENEDOR DEL EMULADOR -->
-  <div id="game-container">
-    <div id="game"></div>
+  <!-- CONSOLA COMPLETA GAME BOY EDITION -->
+  <div id="console-wrapper">
+    
+    <!-- Bisel de la Pantalla -->
+    <div class="screen-bezel">
+      <div class="bezel-header">
+        <span class="brand-title">ANGEL GAME POCKET</span>
+        <div class="power-led"></div>
+      </div>
+      <div id="game"></div>
+    </div>
+
+    <!-- Carcasa y Botones Visuales -->
+    <div class="controls-body">
+      <div class="middle-controls">
+        <div class="dpad">
+          <div class="dpad-cross dpad-v"></div>
+          <div class="dpad-cross dpad-h"></div>
+        </div>
+        <div class="action-buttons">
+          <div class="btn-round">B</div>
+          <div class="btn-round">A</div>
+        </div>
+      </div>
+
+      <div class="bottom-controls">
+        <div>
+          <div class="pill-button"></div>
+          <div class="pill-label">SELECT</div>
+        </div>
+        <div>
+          <div class="pill-button"></div>
+          <div class="pill-label">START</div>
+        </div>
+      </div>
+
+      <div class="speaker-grill">
+        <div class="speaker-line"></div>
+        <div class="speaker-line"></div>
+        <div class="speaker-line"></div>
+        <div class="speaker-line"></div>
+      </div>
+    </div>
+
   </div>
 
   <script type="text/javascript">
@@ -162,7 +299,7 @@
 
     function iniciarJuego() {
       document.getElementById("lock-wrapper").style.display = "none";
-      document.getElementById("game-container").style.display = "block";
+      document.getElementById("console-wrapper").style.display = "flex";
 
       window.EJS_player = "#game";
       window.EJS_core = "gb";
