@@ -50,17 +50,16 @@
     .btn-submit:active { transform: translateY(4px); box-shadow: 0 0 0 #ca8a04; }
     #error-msg { font-size: 8px; color: #ff4d4d; margin-top: 10px; min-height: 12px; }
 
-    /* LAYOUT DE LA CONSOLA (GAME BOY SKIN) */
+    /* LAYOUT DE LA CONSOLA */
     #console-wrapper {
       display: none;
       width: 100vw;
       height: 100vh;
-      background: #eab308; /* Plástico amarillo */
+      background: #eab308;
       position: relative;
       overflow: hidden;
     }
 
-    /* Bisel gris superior */
     .screen-bezel {
       position: absolute;
       top: 15px;
@@ -79,51 +78,26 @@
       z-index: 2;
     }
 
-    .bezel-header {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-
+    .bezel-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
     .brand-title { font-size: 7px; color: #a1a1aa; letter-spacing: 1px; }
     .power-led { width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%; box-shadow: 0 0 8px #ef4444; }
 
-    /* Espacio del juego dentro del bisel */
-    .game-screen-area {
-      width: 100%;
-      height: 220px;
+    /* CONTENEDOR DEL EMULADOR */
+    #game {
+      width: 100% !important;
+      height: 220px !important;
       background-color: #000;
       border-radius: 4px;
       overflow: hidden;
     }
 
-    /* CONTENEDOR TOTAL DE EMULATORJS */
-    #game {
-      position: absolute !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100vw !important;
-      height: 100vh !important;
-      z-index: 5;
-    }
-
-    /* Forzar que la pantalla real del juego se quede arriba en el marco */
     #game canvas {
-      position: absolute !important;
-      top: 50px !important;
-      left: 50% !important;
-      transform: translateX(-50%) !important;
-      width: auto !important;
-      max-width: calc(100vw - 56px) !important;
-      height: 215px !important;
+      width: 100% !important;
+      height: 100% !important;
       object-fit: contain !important;
-      z-index: 6;
-      border-radius: 4px;
     }
 
-    /* MARCO INFERIOR DE DISEÑO (DETRÁS DE LOS BOTONES TÁCTILES REALES) */
+    /* DISEÑO VISUAL INFERIOR */
     .controls-body {
       position: absolute;
       bottom: 20px;
@@ -159,13 +133,6 @@
 
     .speaker-grill { align-self: flex-end; display: flex; gap: 6px; transform: rotate(-25deg); margin-right: 15px; }
     .speaker-line { width: 5px; height: 35px; background: rgba(0,0,0,0.15); border-radius: 3px; }
-
-    /* ESTILOS PARA LOS BOTONES TÁCTILES DEL EMULADOR (HACERLOS TRANSPARENTES SOBRE EL DISEÑO) */
-    .ejs_touch_controls, 
-    div[class*="touch"], 
-    div[style*="touch-action"] {
-      background: transparent !important;
-    }
   </style>
 </head>
 <body>
@@ -187,20 +154,14 @@
 
   <!-- CONSOLA COMPLETA GAME BOY EDITION -->
   <div id="console-wrapper">
-    
-    <!-- Bisel de la Pantalla -->
     <div class="screen-bezel">
       <div class="bezel-header">
         <span class="brand-title">ANGEL GAME POCKET</span>
         <div class="power-led"></div>
       </div>
-      <div class="game-screen-area"></div>
+      <div id="game"></div>
     </div>
 
-    <!-- Contenedor donde EmulatorJS inyecta el canvas y los controles táctiles -->
-    <div id="game"></div>
-
-    <!-- Carcasa y Botones Visuales -->
     <div class="controls-body">
       <div class="middle-controls">
         <div class="dpad">
@@ -231,7 +192,6 @@
         <div class="speaker-line"></div>
       </div>
     </div>
-
   </div>
 
   <script type="text/javascript">
@@ -254,6 +214,27 @@
       }
     }
 
+    function reubicarControlesTactiles() {
+      // Inyectar CSS global para desplazar la capa de botones táctiles de EmulatorJS hacia la carcasa
+      const style = document.createElement("style");
+      style.innerHTML = `
+        /* Forzar que el contenedor de controles ocupe la parte inferior */
+        .ejs_touch_controls, 
+        div[class*="touch_controls"],
+        div[style*="touch-action"] {
+          position: fixed !important;
+          top: 280px !important;
+          bottom: 0 !important;
+          left: 0 !important;
+          width: 100vw !important;
+          height: calc(100vh - 280px) !important;
+          background: transparent !important;
+          z-index: 9999 !important;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
     function iniciarJuego() {
       document.getElementById("lock-wrapper").style.display = "none";
       document.getElementById("console-wrapper").style.display = "block";
@@ -270,6 +251,7 @@
           const startBtn = gameDiv.querySelector("button, div[style*='cursor: pointer']");
           if (startBtn) {
             startBtn.click();
+            reubicarControlesTactiles();
             obs.disconnect();
           }
         }
