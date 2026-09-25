@@ -73,7 +73,7 @@
       transform: translateX(-50%);
       width: calc(100% - 24px);
       max-width: 380px;
-      height: calc(48vh);
+      height: 48vh;
       max-height: 300px;
       background: #27272a;
       border-radius: 12px 12px 35px 12px;
@@ -104,16 +104,17 @@
       object-fit: contain !important;
     }
 
-    /* OCULTAR OVERLAY DE CONTROLES NATIVOS DE EMULATORJS */
+    /* OCULTAR OVERLAY FLOTANTE AUTOMÁTICO DE EMULATORJS */
     .ejs_touch_controls, 
-    div[class*="touch"],
+    div[class*="touch_controls"],
+    div[class*="virtual"],
     div[style*="touch-action"] {
       display: none !important;
       opacity: 0 !important;
       pointer-events: none !important;
     }
 
-    /* CARCASA Y CONTROLES TOUCH CUSTOM (TIPO DELTA) */
+    /* CARCASA Y CONTROLES TOUCH CUSTOM (ESTILO DELTA) */
     .controls-body {
       position: absolute;
       bottom: 0;
@@ -140,7 +141,6 @@
       position: absolute;
       background: #18181b;
       box-shadow: inset 0 2px 2px rgba(255,255,255,0.2), 0 4px 0 #000;
-      active-background: #000;
       touch-action: none;
     }
     .dpad-btn:active, .dpad-btn.active {
@@ -228,27 +228,27 @@
         <!-- D-PAD INTERACTIVO -->
         <div class="dpad">
           <div class="dpad-center"></div>
-          <div class="dpad-btn dpad-up" data-key="ArrowUp"></div>
-          <div class="dpad-btn dpad-down" data-key="ArrowDown"></div>
-          <div class="dpad-btn dpad-left" data-key="ArrowLeft"></div>
-          <div class="dpad-btn dpad-right" data-key="ArrowRight"></div>
+          <div class="dpad-btn dpad-up" data-code="ArrowUp"></div>
+          <div class="dpad-btn dpad-down" data-code="ArrowDown"></div>
+          <div class="dpad-btn dpad-left" data-code="ArrowLeft"></div>
+          <div class="dpad-btn dpad-right" data-code="ArrowRight"></div>
         </div>
 
         <!-- BOTONES A / B INTERACTIVOS -->
         <div class="action-buttons">
-          <div class="btn-round" data-key="s">B</div>
-          <div class="btn-round" data-key="a">A</div>
+          <div class="btn-round" data-code="KeyX">B</div>
+          <div class="btn-round" data-code="KeyZ">A</div>
         </div>
       </div>
 
       <!-- SELECT Y START -->
       <div class="bottom-controls">
         <div class="pill-wrapper">
-          <div class="pill-button" data-key="Shift"></div>
+          <div class="pill-button" data-code="ShiftRight"></div>
           <div class="pill-label">SELECT</div>
         </div>
         <div class="pill-wrapper">
-          <div class="pill-button" data-key="Enter"></div>
+          <div class="pill-button" data-code="Enter"></div>
           <div class="pill-label">START</div>
         </div>
       </div>
@@ -282,53 +282,72 @@
       }
     }
 
-    // MAPEO DE EVENTOS TECLADO VIRTUAL HACIA EL EMULADOR
+    // INTERCEPTOR Y ENVIADOR DIRECTO AL CANVAS DE EMULATORJS
     function mapearTeclasDelta() {
-      const mapeoTeclas = {
-        'ArrowUp': 38,
-        'ArrowDown': 40,
-        'ArrowLeft': 37,
-        'ArrowRight': 39,
-        'a': 90,       /* Z en teclado */
-        's': 88,       /* X en teclado */
-        'Enter': 13,   /* Enter */
-        'Shift': 16    /* Shift */
+      const codigos = {
+        'ArrowUp': { key: 'ArrowUp', code: 'ArrowUp', keyCode: 38 },
+        'ArrowDown': { key: 'ArrowDown', code: 'ArrowDown', keyCode: 40 },
+        'ArrowLeft': { key: 'ArrowLeft', code: 'ArrowLeft', keyCode: 37 },
+        'ArrowRight': { key: 'ArrowRight', code: 'ArrowRight', keyCode: 39 },
+        'KeyZ': { key: 'z', code: 'KeyZ', keyCode: 90 },
+        'KeyX': { key: 'x', code: 'KeyX', keyCode: 88 },
+        'Enter': { key: 'Enter', code: 'Enter', keyCode: 13 },
+        'ShiftRight': { key: 'Shift', code: 'ShiftRight', keyCode: 16 }
       };
 
-      function simularEvento(codigoTecla, tipo) {
-        const evento = new KeyboardEvent(tipo, {
-          keyCode: codigoTecla,
-          which: codigoTecla,
+      function enviarTecla(codeStr, type) {
+        const info = codigos[codeStr];
+        if (!info) return;
+
+        const eventInit = {
+          key: info.key,
+          code: info.code,
+          keyCode: info.keyCode,
+          which: info.keyCode,
           bubbles: true,
-          cancelable: true
-        });
-        
-        // Enviar evento globalmente y al iframe/canvas si existe
-        window.dispatchEvent(evento);
-        document.dispatchEvent(evento);
-        
-        const iframe = document.querySelector("#game iframe");
-        if (iframe && iframe.contentDocument) {
-          iframe.contentDocument.dispatchEvent(evento);
+          cancelable: true,
+          view: window
+        };
+
+        const event = new KeyboardEvent(type, eventInit);
+
+        // Disparar evento a la ventana principal, documento y canvas activo
+        window.dispatchEvent(event);
+        document.dispatchEvent(event);
+
+        const targetCanvas = document.querySelector("#game canvas") || document.querySelector("canvas");
+        if (targetCanvas) {
+          targetCanvas.focus();
+          targetCanvas.dispatchEvent(event);
+        }
+
+        // Si EmulatorJS utiliza módulo de entrada interno, simular la pulsación
+        if (window.EJS_emulator && window.EJS_emulator.gameManager) {
+          try {
+            if (type === 'keydown') {
+              window.EJS_emulator.gameManager.simulateInput(0, info.keyCode, 1);
+            } else {
+              window.EJS_emulator.gameManager.simulateInput(0, info.keyCode, 0);
+            }
+          } catch (e) {}
         }
       }
 
-      const elementosControles = document.querySelectorAll("[data-key]");
-      
+      const elementosControles = document.querySelectorAll("[data-code]");
+
       elementosControles.forEach(btn => {
-        const key = btn.getAttribute("data-key");
-        const keyCode = mapeoTeclas[key];
+        const code = btn.getAttribute("data-code");
 
         const presionar = (e) => {
           e.preventDefault();
           btn.classList.add("active");
-          simularEvento(keyCode, "keydown");
+          enviarTecla(code, 'keydown');
         };
 
         const soltar = (e) => {
           e.preventDefault();
           btn.classList.remove("active");
-          simularEvento(keyCode, "keyup");
+          enviarTecla(code, 'keyup');
         };
 
         btn.addEventListener("touchstart", presionar, { passive: false });
@@ -348,7 +367,7 @@
       window.EJS_gameUrl = "pokemon-yellow.gb";
       window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
       window.EJS_startOnLoaded = true;
-      window.EJS_onMobile = false; // Desactiva la capa táctil por defecto del emulador
+      window.EJS_onMobile = false;
 
       const observer = new MutationObserver((mutations, obs) => {
         const gameDiv = document.getElementById("game");
@@ -356,7 +375,7 @@
           const startBtn = gameDiv.querySelector("button, div[style*='cursor: pointer']");
           if (startBtn) {
             startBtn.click();
-            mapearTeclasDelta();
+            setTimeout(mapearTeclasDelta, 1000);
             obs.disconnect();
           }
         }
